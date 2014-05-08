@@ -1,5 +1,7 @@
 (ns express-cljs.core
-  (:require [cljs.nodejs :as n]))
+  (:require-macros [cljs.core.async.macros :refer [go]])
+  (:require [cljs.nodejs :as n]
+            [cljs.core.async :refer [<! timeout]]))
 
 (n/enable-util-print!)
 
@@ -11,7 +13,8 @@
 
 (. app (get "/"
             (fn [req res]
-              (. res (sendfile "public/index.html")))))
+              (go (<! (timeout 1000))
+                  (. res (sendfile "public/index.html"))))))
 
 (defn main []
   (. app (listen 34567)))
